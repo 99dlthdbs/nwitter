@@ -3,9 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { collection, getDocs, query, where, orderBy } from 'firebase/firestore';
 import { updateProfile } from '@firebase/auth';
-import { async } from '@firebase/util';
 
-function Profile({ userObj }) {
+function Profile({ userObj, refreshUser }) {
   const navigate = useNavigate();
   const [newDisplayName, setNewDisplayName] = useState(userObj.displayName);
   const onLogOutClick = () => {
@@ -39,7 +38,10 @@ function Profile({ userObj }) {
   const onSubmit = async (event) => {
     event.preventDefault();
     if (userObj.displayName !== newDisplayName) {
-      await updateProfile(userObj, { displayName: newDisplayName });
+      await updateProfile(authService.currentUser, {
+        displayName: newDisplayName,
+      });
+      refreshUser();
     }
   };
 
