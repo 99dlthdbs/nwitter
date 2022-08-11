@@ -1,3 +1,4 @@
+import Nweet from 'components/Nweet';
 import { dbService } from 'fbase';
 import { query, collection, addDoc, onSnapshot } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
@@ -9,7 +10,7 @@ function Home({ userObj }) {
   const getNweets = async () => {
     const q = query(collection(dbService, 'nweets'));
     onSnapshot(q, (snapshot) => {
-      // forEach보다 map을 사용하면 re-render 발생 감소
+      // forEach보다 map을 사용하면(getDocs) re-render 발생 감소
       const nweetArray = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
@@ -50,9 +51,11 @@ function Home({ userObj }) {
       </form>
       <div>
         {nweets.map((nweet) => (
-          <div key={nweet.id}>
-            <h4>{nweet.text}</h4>
-          </div>
+          <Nweet
+            key={nweet.id}
+            nweetObj={nweet}
+            isOwner={nweet.creatorId === userObj.uid}
+          />
         ))}
       </div>
     </div>
